@@ -10,7 +10,7 @@ const tokenEndpoint = `https://${authDomain}/oauth/token`
 
 const main = async () => {
     try {
-        // Request access token from /token endpoint
+        // Authenticate with client ID + client token to /token endpoint
         const tokenResponse = await axios({
             method: 'post',
             url: tokenEndpoint,
@@ -18,7 +18,7 @@ const main = async () => {
             data: {
                 client_id: clientId,
                 client_secret: clientSecret,
-                audience: 'https://localhost:3000',
+                audience: 'https://localhost:8080',
                 grant_type: 'client_credentials'
             }
         })
@@ -28,9 +28,10 @@ const main = async () => {
         const tokenType = tokenResponse.data.token_type
         const accessToken = tokenResponse.data.access_token
     
+        // Request data with access token
         const apiResponse = await axios({
             method: 'get',
-            url: 'https://localhost:3000',
+            url: apiURL,
             headers: { authorization: `${tokenType} ${accessToken}` },
         })
     
