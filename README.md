@@ -4,4 +4,6 @@
 
 [Client Credentials Flow](client-credentials-flow/README.md)
 
-[SPA Auth Code Flow with PKCE](spa-auth-code-flow-with-pkce/README.md)
+[Auth Code Flow (Express wWeb App)](auth-code-flow/README.md)
+
+[Auth Code Flow with PKCE (React SPA)](auth-code-flow-with-pkce/README.md)
