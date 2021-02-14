@@ -1,70 +1,25 @@
 ## Auth Code Flow
 
-![Auth Code Flow diagram](../docs/auth-sequence-client-credentials.png)
+![Auth Code Flow diagram](../docs/auth-sequence-auth-code.png)
 
-Used for machine-to-machine applications, such as CLIs, daemons, and backend services.
+Use for private apps, which can seurely store the client id and secret.
 
-The application is both the client and the resource owner.
+1. The user clicks Login within the regular web application.
 
-1. The application authenticates with the authorization server using it's Client ID and Secret.
+2. Auth0's SDK redirects the user to the Auth0 Authorization Server (/authorize endpoint).
 
-2. The authorization server validates the Client ID and Secret.
+3. Your Auth0 Authorization Server redirects the user to the login and authorization prompt.
 
-3. The authorization server responds with an access token.
+4. The user authenticates using one of the configured login options and may see a consent page listing the permissions Auth0 will give to the regular web application.
 
-4. The application uses the access token to request a resource from the resource server.
+5. Your Auth0 Authorization Server redirects the user back to the application with an authorization code, which is good for one use.
 
-5. The resource server validates the access token.
+6. Auth0's SDK sends this code to the Auth0 Authorization Server (/oauth/token endpoint) along with the application's Client ID and Client Secret.
 
-6. The resource server responds with the resource.
+7. Your Auth0 Authorization Server verifies the code, Client ID, and Client Secret.
 
-### Client Requests
+8. Your Auth0 Authorization Server responds with an ID Token and Access Token (and optionally, a Refresh Token).
 
-The application authenticates with the authorization server using it's Client ID and Secret.
+9. Your application can use the Access Token to call an API to access information about the user.
 
-```bash
-domain=<YOUR_DOMAIN>
-client_id=<YOUR_CLIENT_ID>
-client_secret=<YOUR_CLIENT_SECRET>
-audience=<YOUR_AUDIENCE>
-
-curl --request POST \
-  --url "https://${domain}/oauth/token" \
-  --header 'content-type: application/x-www-form-urlencoded' \
-  --data grant_type=client_credentials \
-  --data client_id=$client_id \
-  --data client_secret=$client_secret \
-  --data audience=$audience
-```
-
-The authorization server responds with an access token.
-
-```json
-{
-    "access_token":"eyJhbGciOiJ...",
-    "scope":"read:all",
-    "expires_in":86400,
-    "token_type":"Bearer"
-}
-```
-
-The application uses the access token to request a resource from the resource server.
-
-```bash
-access_token=<ACCESS_TOKEN>
-
-curl --request GET \
-  --url https://myapi.com/api \
-  --header 'authorization: Bearer ${access_token}' \
-  --header 'content-type: application/json'
-```
-
-### Resource Server Access Token Validation
-
-1. Perform standard JWT validation.
-    * Check that the JWT is well formed.
-    * Check the signature.
-    * Check the standard claims
-2. Verify token audience claims.
-3. Verify permissions (scopes).
-
+10. The API responds with requested data.
